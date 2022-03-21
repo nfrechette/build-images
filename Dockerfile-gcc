@@ -7,7 +7,7 @@ RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-se
     apt-get install -y -q apt-utils dialog && \
     apt-get install -y -q sudo aptitude flex bison libncurses5-dev make git exuberant-ctags bc libssl-dev libelf-dev && \
     apt-get install -y -q python3 cmake && \
-    apt-get install -y -q gcc-${GCC_VERSION} g++-${GCC_VERSION} gcc g++
+    apt-get install -y -q gcc-${GCC_VERSION} g++-${GCC_VERSION} g++-multilib
 
 WORKDIR /project-src
 
