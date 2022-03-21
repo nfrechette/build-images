@@ -1,12 +1,15 @@
 FROM ubuntu:16.04 as base
 
-ARG GCC_VERSION
 RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
+    apt-get update && \
+    apt-get install -y -q apt-transport-https ca-certificates && \
+    echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-4.0 main" | tee -a /etc/apt/sources.list > /dev/null && \
     apt-get update && \
     apt-get install -y -q apt-utils dialog && \
     apt-get install -y -q sudo aptitude flex bison libncurses5-dev make git exuberant-ctags bc libssl-dev libelf-dev && \
-    apt-get install -y -q python3 cmake && \
-    apt-get install -y -q gcc-${GCC_VERSION} g++-${GCC_VERSION} g++-multilib
+    apt-get install -y -q python3 cmake g++-multilib && \
+    apt-get install -y -q g++-4.9 g++-5 && \
+    apt-get install -y -q clang-4.0
 
 WORKDIR /project-src
 
