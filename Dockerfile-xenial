@@ -1,5 +1,4 @@
-ARG UBUNTU_VERSION
-FROM ubuntu:${UBUNTU_VERSION} as base
+FROM ubuntu:16.04 as base
 
 ARG GCC_VERSION
 RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
