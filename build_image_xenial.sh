@@ -1,4 +1,12 @@
 #!/bin/bash
+
+ARCH=amd64
+
+if ! [ -z "$1" ]; then
+    ARCH=$1
+fi
+
 docker build --file Dockerfile-xenial \
-    --platform linux/amd64 \
-    --tag ghcr.io/nfrechette/toolchain-amd64-xenial:v1 .
+    --platform linux/$ARCH \
+    --build-arg ARCH=$ARCH \
+    --tag ghcr.io/nfrechette/toolchain-$ARCH-xenial:v1 .
