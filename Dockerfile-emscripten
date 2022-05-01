@@ -1,0 +1,30 @@
+FROM ubuntu:18.04 as base
+
+# This image supports:
+#    - Emscripten 1.39.11
+
+# Architecture: amd64 or arm64
+ARG ARCH
+
+# Basics, emscripten needs python 2 and 3
+RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
+    apt-get update && \
+    apt-get install -y -q apt-transport-https ca-certificates && \
+    apt-get install -y -q curl gnupg && \
+    apt-get install -y -q make git python python3 cmake
+
+# Emscripten
+RUN git clone https://github.com/emscripten-core/emsdk.git && \
+    cd emsdk && \
+    ./emsdk install 1.39.11 && \
+    ./emsdk activate 1.39.11
+
+# Setup environment
+ENV EMSDK=/emsdk
+ENV EM_CONFIG=/emsdk/.emscripten
+ENV EMSDK_NODE=/emsdk/node/14.18.2_64bit/bin/node
+ENV PATH=/emsdk:/emsdk/upstream/emscripten:/emsdk/upstream/bin:/emsdk/node/14.18.2_64bit/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+WORKDIR /project-src
+
+CMD ["bash"]
