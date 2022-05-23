@@ -1,0 +1,33 @@
+FROM ubuntu:20.04 as base
+
+# This image supports:
+#    - Clang 14.0
+#    - Sonar Scanner 4.7.0.2747
+
+# Architecture: amd64 or arm64
+ARG ARCH
+
+# Basics
+RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
+    apt-get update && \
+    apt-get install -y -q apt-transport-https ca-certificates && \
+    apt-get install -y -q curl gnupg wget unzip && \
+    apt-get install -y -q make git python3 cmake
+
+# Build wrapper
+RUN wget -q https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip && \
+    unzip build-wrapper-linux-x86.zip
+
+# Sonar Scanner
+RUN wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip && \
+    unzip sonar-scanner-cli-4.7.0.2747-linux.zip
+
+# Clang
+RUN curl -sSL "http://apt.llvm.org/llvm-snapshot.gpg.key" | apt-key add - && \
+    echo "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main" | tee -a /etc/apt/sources.list > /dev/null && \
+    apt-get update && \
+    apt-get install -y -q clang-14
+
+WORKDIR /project-src
+
+CMD ["bash"]
