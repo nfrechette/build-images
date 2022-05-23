@@ -9,4 +9,4 @@ fi
 docker build --file Dockerfile-sonarcloud \
     --platform linux/$ARCH \
     --build-arg ARCH=$ARCH \
-    --tag ghcr.io/nfrechette/toolchain-$ARCH-linux-sonarcloud:v1 .
+    --tag ghcr.io/nfrechette/toolchain-$ARCH-linux-sonarcloud:v2 .
