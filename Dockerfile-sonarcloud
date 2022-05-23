@@ -16,11 +16,13 @@ RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-se
 
 # Build wrapper
 RUN wget -q https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip && \
-    unzip build-wrapper-linux-x86.zip
+    unzip build-wrapper-linux-x86.zip && \
+    rm build-wrapper-linux-x86.zip
 
 # Sonar Scanner
 RUN wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip && \
-    unzip sonar-scanner-cli-4.7.0.2747-linux.zip
+    unzip sonar-scanner-cli-4.7.0.2747-linux.zip && \
+    rm sonar-scanner-cli-4.7.0.2747-linux.zip
 
 # Clang
 RUN curl -sSL "http://apt.llvm.org/llvm-snapshot.gpg.key" | apt-key add - && \
