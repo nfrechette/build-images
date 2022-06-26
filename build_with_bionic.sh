@@ -4,7 +4,6 @@
 SRC=~/sjson-cpp
 ARCH=amd64
 
-exec docker run --rm \
+exec docker run -it --rm \
     -v $SRC:/project-src:Z \
-    ghcr.io/nfrechette/toolchain-$ARCH-bionic:v1 \
-    "$@"
+    ghcr.io/nfrechette/toolchain-$ARCH-bionic:v1
