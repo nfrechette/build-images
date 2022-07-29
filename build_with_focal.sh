@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Usage: .\build_with_focal.sh path/to/src/dir [arch]
+# First argument is source directory we'll map
+# Second argument is optional architecture to use, if omitted, we'll use the detected architecture
+
 # Source directory we'll map
 SRC=$1
 
