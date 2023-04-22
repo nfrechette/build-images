@@ -1,0 +1,36 @@
+FROM ubuntu:23.04 as base
+
+# This image supports:
+#    - GCC 12.2.0, 13.0.1
+#    - Clang 15.0.7
+
+# Architecture: amd64 or arm64
+ARG ARCH
+
+# Basics
+# software-properties-common is used for add-apt-repository
+RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
+    apt-get update && \
+    apt-get install -y -q apt-transport-https ca-certificates && \
+    apt-get install -y -q software-properties-common && \
+    apt-get install -y -q curl gnupg && \
+    apt-get install -y -q make git python3 cmake
+
+# GCC
+# We need ubuntu-toolchain-r/test for gcc
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
+    apt-get update && \
+    apt-get install -y -q g++-12 g++-13 && \
+    if [ "$ARCH" != "arm64" ]; then \
+        apt-get install -y -q g++-12-multilib g++-13-multilib; \
+    fi
+
+# Clang
+RUN curl -sSL "http://apt.llvm.org/llvm-snapshot.gpg.key" | apt-key add - && \
+    echo "deb http://apt.llvm.org/lunar/ llvm-toolchain-lunar-15 main" | tee -a /etc/apt/sources.list > /dev/null && \
+    apt-get update && \
+    apt-get install -y -q clang-15
+
+WORKDIR /project-src
+
+CMD ["bash"]
