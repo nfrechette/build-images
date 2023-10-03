@@ -7,6 +7,9 @@ FROM ubuntu:20.04 as base
 # Architecture: amd64 or arm64
 ARG ARCH
 
+# Set a sensible locale
+ENV LANG C.UTF-8
+
 # Basics
 # software-properties-common is used for add-apt-repository
 RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \

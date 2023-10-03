@@ -6,6 +6,9 @@ FROM ubuntu:18.04 as base
 # Architecture: amd64 or arm64
 ARG ARCH
 
+# Set a sensible locale
+ENV LANG C.UTF-8
+
 # Basics, emscripten needs python 2 and 3
 RUN set -x && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
     apt-get update && \
