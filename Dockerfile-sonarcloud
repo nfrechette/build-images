@@ -1,8 +1,8 @@
-FROM ubuntu:20.04 as base
+FROM ubuntu:23.04 as base
 
 # This image supports:
-#    - Clang 14.0
-#    - Sonar Scanner 4.7.0.2747
+#    - Clang 15.0.7
+#    - Sonar Scanner 5.0.1.3006
 
 # Architecture: amd64 or arm64
 ARG ARCH
@@ -23,15 +23,15 @@ RUN wget -q https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip && \
     rm build-wrapper-linux-x86.zip
 
 # Sonar Scanner
-RUN wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip && \
-    unzip sonar-scanner-cli-4.7.0.2747-linux.zip && \
-    rm sonar-scanner-cli-4.7.0.2747-linux.zip
+RUN wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip && \
+    unzip sonar-scanner-cli-5.0.1.3006-linux.zip && \
+    rm sonar-scanner-cli-5.0.1.3006-linux.zip
 
 # Clang
 RUN curl -sSL "http://apt.llvm.org/llvm-snapshot.gpg.key" | apt-key add - && \
-    echo "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main" | tee -a /etc/apt/sources.list > /dev/null && \
+    echo "deb http://apt.llvm.org/lunar/ llvm-toolchain-lunar-15 main" | tee -a /etc/apt/sources.list > /dev/null && \
     apt-get update && \
-    apt-get install -y -q clang-14
+    apt-get install -y -q clang-15
 
 WORKDIR /project-src
 
