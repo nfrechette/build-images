@@ -6,4 +6,4 @@ if ! [ -z "$1" ]; then
     ARCH=$1
 fi
 
-docker image push ghcr.io/nfrechette/toolchain-$ARCH-lunar:v1
+docker image push ghcr.io/nfrechette/toolchain-$ARCH-lunar:v2

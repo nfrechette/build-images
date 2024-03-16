@@ -25,4 +25,4 @@ fi
 
 exec docker run -it --rm \
     -v $SRC:/project-src:Z \
-    ghcr.io/nfrechette/toolchain-$ARCH-lunar:v1
+    ghcr.io/nfrechette/toolchain-$ARCH-lunar:v2

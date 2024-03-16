@@ -9,4 +9,4 @@ fi
 docker build --file Dockerfile-lunar \
     --platform linux/$ARCH \
     --build-arg ARCH=$ARCH \
-    --tag ghcr.io/nfrechette/toolchain-$ARCH-lunar:v1 .
+    --tag ghcr.io/nfrechette/toolchain-$ARCH-lunar:v2 .

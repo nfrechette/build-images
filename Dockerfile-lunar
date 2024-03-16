@@ -1,8 +1,8 @@
 FROM ubuntu:23.04 as base
 
 # This image supports:
-#    - GCC 12.2.0, 13.0.1
-#    - Clang 15.0.7
+#    - GCC 12.3.0, 13.1.0
+#    - Clang 15.0.7, 16.0.6, 17.0.6, 18.1.2
 
 # Architecture: amd64 or arm64
 ARG ARCH
@@ -31,8 +31,11 @@ RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
 # Clang
 RUN curl -sSL "http://apt.llvm.org/llvm-snapshot.gpg.key" | apt-key add - && \
     echo "deb http://apt.llvm.org/lunar/ llvm-toolchain-lunar-15 main" | tee -a /etc/apt/sources.list > /dev/null && \
+    echo "deb http://apt.llvm.org/lunar/ llvm-toolchain-lunar-16 main" | tee -a /etc/apt/sources.list > /dev/null && \
+    echo "deb http://apt.llvm.org/lunar/ llvm-toolchain-lunar-17 main" | tee -a /etc/apt/sources.list > /dev/null && \
+    echo "deb http://apt.llvm.org/lunar/ llvm-toolchain-lunar-18 main" | tee -a /etc/apt/sources.list > /dev/null && \
     apt-get update && \
-    apt-get install -y -q clang-15
+    apt-get install -y -q clang-15 clang-16 clang-17 clang-18
 
 WORKDIR /project-src
 
