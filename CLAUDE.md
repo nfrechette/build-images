@@ -33,6 +33,9 @@ existing script for the same image rather than deriving the name.
 ./build_image_lunar.sh
 ./build_image_lunar.sh arm64
 
+# resolute also builds for armv7 (Docker platform linux/arm/v7, emulated by QEMU on other hosts)
+./build_image_resolute.sh armv7
+
 # Publish (requires CR_PAT env var holding a GitHub PAT with package registry write access)
 ./docker_login.sh
 ./docker_push_lunar.sh
@@ -53,8 +56,8 @@ three files per image — `build_image_*.sh`, `docker_push_*.sh`, and `build_wit
 three must be bumped in the same commit** when an image's contents change, otherwise consumers pull
 a stale image. See `6eaafbb` for the canonical bump.
 
-Current tags: xenial `v1`, bionic `v1`, focal `v1`, emscripten `v1`, lunar `v2`, resolute `v1`,
-sonarcloud `v3`.
+Current tags: xenial `v1`, bionic `v1`, focal `v1`, emscripten `v1`, lunar `v2`, resolute `v1`
+(amd64, arm64, and armv7), sonarcloud `v3`.
 
 The distro images' compiler ranges are contiguous: a new image picks up where the previous one
 stops (lunar ends at GCC 13 / Clang 18, so resolute starts at GCC 14 / Clang 19).
@@ -73,8 +76,15 @@ versions is part of the contract — update it when adding compilers.
 
 Things that are easy to get wrong:
 
-- **Multilib is amd64-only.** `g++-*-multilib` packages must stay inside the
-  `if [ "$ARCH" != "arm64" ]` guard; they do not exist for arm64 and will break that build.
+- **Multilib is amd64-only.** `g++-*-multilib` packages must stay inside an amd64-only guard
+  (`if [ "$ARCH" = "amd64" ]` in `resolute`, `!= arm64` in the older images); they do not exist
+  for arm64 or armhf and will break those builds.
+- **armv7 is `resolute` only.** Docker names the platform `linux/arm/v7`, not `linux/armv7`, so
+  `build_image_resolute.sh` and `build_with_resolute.sh` map `armv7` to it; the image name still
+  uses `armv7` (`toolchain-armv7-resolute`). apt.llvm.org publishes no armhf packages, so the
+  armv7 image gets Clang from the stock repos, and it only installs one compiler of each kind
+  (GCC 15, Clang 22) because it exists to test with, not to cover a version range. Consumers must
+  pass `-mfpu=neon`, since the armhf GCC does not enable NEON by default.
 - **LLVM apt repos are per-distro.** The `apt.llvm.org/<codename>/llvm-toolchain-<codename>-<ver>`
   lines must use the host image's codename, and only versions LLVM actually published for that
   codename are installable. This caps how new a compiler a given base image can host. On
