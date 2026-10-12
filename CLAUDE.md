@@ -11,7 +11,7 @@ code here — only Dockerfiles and thin bash wrappers.
 ## Structure
 
 Each image is a quartet of files sharing one name (`xenial`, `bionic`, `focal`, `lunar`,
-`emscripten`, `sonarcloud`):
+`resolute`, `emscripten`, `sonarcloud`):
 
 - `Dockerfile-<name>` — the image definition
 - `build_image_<name>.sh [arch]` — `docker build`, defaults to `amd64`
@@ -53,7 +53,11 @@ three files per image — `build_image_*.sh`, `docker_push_*.sh`, and `build_wit
 three must be bumped in the same commit** when an image's contents change, otherwise consumers pull
 a stale image. See `6eaafbb` for the canonical bump.
 
-Current tags: xenial `v1`, bionic `v1`, focal `v1`, emscripten `v1`, lunar `v2`, sonarcloud `v3`.
+Current tags: xenial `v1`, bionic `v1`, focal `v1`, emscripten `v1`, lunar `v2`, resolute `v1`,
+sonarcloud `v3`.
+
+The distro images' compiler ranges are contiguous: a new image picks up where the previous one
+stops (lunar ends at GCC 13 / Clang 18, so resolute starts at GCC 14 / Clang 19).
 
 Known drift: `build_with_sonarcloud.sh` still points at `:v2` while build/push use `:v3`, and it
 hardcodes `SRC=~/sjson-cpp` / `ARCH=amd64` instead of taking arguments like its siblings. The
@@ -73,7 +77,12 @@ Things that are easy to get wrong:
   `if [ "$ARCH" != "arm64" ]` guard; they do not exist for arm64 and will break that build.
 - **LLVM apt repos are per-distro.** The `apt.llvm.org/<codename>/llvm-toolchain-<codename>-<ver>`
   lines must use the host image's codename, and only versions LLVM actually published for that
-  codename are installable. This caps how new a compiler a given base image can host.
+  codename are installable. This caps how new a compiler a given base image can host. On
+  `resolute`, Clang 19–21 come from the stock Ubuntu repos (apt.llvm.org has no 19/20 there, and
+  its `~++` snapshot version strings sort below the stock 21), and only 22+ from apt.llvm.org.
+- **No `apt-key` from 26.04 on.** apt 3.x removed it. `resolute` dearmors the LLVM key into
+  `/usr/share/keyrings/` and references it with `[signed-by=...]` on each repo line; older images
+  still use `apt-key add`.
 - **Newer GCC comes from a PPA.** `focal` and `lunar` add `ppa:ubuntu-toolchain-r/test` (which
   needs `software-properties-common`) to get GCC versions the stock repos lack.
 - **Emscripten paths are pinned.** The emsdk version appears in two `emsdk` commands, and the
