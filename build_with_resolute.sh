@@ -2,7 +2,7 @@
 
 # Usage: .\build_with_resolute.sh path/to/src/dir [arch]
 # First argument is source directory we'll map
-# Second argument is optional architecture to use (amd64, arm64, or armv7), if omitted, we'll use the detected architecture
+# Second argument is optional architecture to use (amd64, arm64, armv7, or riscv64), if omitted, we'll use the detected architecture
 
 # Source directory we'll map
 SRC=$1
@@ -15,6 +15,8 @@ elif [[ $sys_info =~ arm64 ]] || [[ $sys_info =~ aarch64 ]]; then
     ARCH=arm64
 elif [[ $sys_info =~ armv7 ]]; then
     ARCH=armv7
+elif [[ $sys_info =~ riscv64 ]]; then
+    ARCH=riscv64
 else
     # If we can't detect the architecture, use amd64
     ARCH=amd64

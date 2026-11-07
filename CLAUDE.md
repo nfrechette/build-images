@@ -33,8 +33,10 @@ existing script for the same image rather than deriving the name.
 ./build_image_lunar.sh
 ./build_image_lunar.sh arm64
 
-# resolute also builds for armv7 (Docker platform linux/arm/v7, emulated by QEMU on other hosts)
+# resolute also builds for armv7 (Docker platform linux/arm/v7) and riscv64 (linux/riscv64),
+# emulated by QEMU on other hosts
 ./build_image_resolute.sh armv7
+./build_image_resolute.sh riscv64
 
 # Publish (requires CR_PAT env var holding a GitHub PAT with package registry write access)
 ./docker_login.sh
@@ -57,7 +59,7 @@ three must be bumped in the same commit** when an image's contents change, other
 a stale image. See `6eaafbb` for the canonical bump.
 
 Current tags: xenial `v1`, bionic `v1`, focal `v1`, emscripten `v1`, lunar `v2`, resolute `v1`
-(amd64, arm64, and armv7), sonarcloud `v3`.
+(amd64, arm64, armv7, and riscv64), sonarcloud `v3`.
 
 The distro images' compiler ranges are contiguous: a new image picks up where the previous one
 stops (lunar ends at GCC 13 / Clang 18, so resolute starts at GCC 14 / Clang 19).
@@ -79,6 +81,11 @@ Things that are easy to get wrong:
 - **Multilib is amd64-only.** `g++-*-multilib` packages must stay inside an amd64-only guard
   (`if [ "$ARCH" = "amd64" ]` in `resolute`, `!= arm64` in the older images); they do not exist
   for arm64 or armhf and will break those builds.
+- **riscv64 is `resolute` only.** Docker names the platform `linux/riscv64`, so the scripts need no
+  mapping. Ubuntu 26.04 needs a CPU with the RVA23 profile; the QEMU of Docker Desktop has it.
+  As with armv7, apt.llvm.org publishes no riscv64 packages, so the image installs only GCC 15 and
+  Clang 22 from the stock repos. RTM has no SIMD code for RISC-V, so builds use the scalar code
+  path.
 - **armv7 is `resolute` only.** Docker names the platform `linux/arm/v7`, not `linux/armv7`, so
   `build_image_resolute.sh` and `build_with_resolute.sh` map `armv7` to it; the image name still
   uses `armv7` (`toolchain-armv7-resolute`). apt.llvm.org publishes no armhf packages, so the
